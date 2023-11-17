@@ -1,0 +1,127 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace TurtleGraphicsApp
+{
+    public partial class MainWindow : Window
+    {
+        private int[,] grid;
+        private int turtleX, turtleY;
+        private bool penDown;
+
+        public MainWindow()
+        {
+            InitializeComponent();
+
+            // Set initial values
+            grid = new int[50, 50];
+            turtleX = 0;
+            turtleY = 0;
+            penDown = false;
+        }
+
+        private void executeCommandButton_Click(object sender, RoutedEventArgs e)
+        {
+            string command = commandTextBox.Text.Trim();
+
+            if (command.Length == 0)
+            {
+                return;
+            }
+
+            switch (command[0])
+            {
+                case '1':
+                    penDown = false;
+                    break;
+                case '2':
+                    penDown = true;
+                    break;
+                case '3':
+                    TurnRight();
+                    break;
+                case '4':
+                    TurnLeft();
+                    break;
+                case '5':
+                    int steps = int.Parse(command.Substring(1));
+                    MoveForward(steps);
+                    break;
+                case '6':
+                    PrintGrid();
+                    break;
+                case '9':
+                    Environment.Exit(0);
+                    break;
+                default:
+                    MessageBox.Show("Invalid command: " + command);
+                    break;
+            }
+
+            commandTextBox.Text = "";
+        }
+
+        private void MoveForward(int steps)
+        {
+            for (int i = 0; i < steps; i++)
+            {
+                if (penDown)
+                {
+                    grid[turtleX, turtleY] = 1;
+                }
+
+                switch (turtleDirection)
+                {
+                    case Direction.Up:
+                        if (turtleY > 0)
+                        {
+                            turtleY--;
+                        }
+                        break;
+                    case Direction.Down:
+                        if (turtleY < grid.GetLength(1) - 1)
+                        {
+                            turtleY++;
+                        }
+                        break;
+                    case Direction.Left:
+                        if (turtleX > 0)
+                        {
+                            turtleX--;
+                        }
+                        break;
+                    case Direction.Right:
+                        if (turtleX < grid.GetLength(0) - 1)
+                        {
+                            turtleX++;
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void PrintGrid()
+        {
+            for (int y = 0; y < grid.GetLength(1); y++)
+            {
+                for (int x = 0; x < grid.GetLength(0); x++)
+                {
+                    Console.Write(grid[x, y] == 1 ? "*" : " ");
+                }
+                Console.WriteLine();
+            }
+        }
+    }
+}
